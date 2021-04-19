@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\Route;
 // Route::get('/vehicles', [VehicleController::class, 'index']);
 // Route::post('/vehicles', [VehicleController::class, 'store']);
 Route::resource('vehicles', VehicleController::class);
-
+Route::get('vehicles/search/{make}', [VehicleController::class, 'search']);
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });

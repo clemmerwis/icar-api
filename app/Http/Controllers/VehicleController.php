@@ -68,4 +68,15 @@ class VehicleController extends Controller
     {
         return Vehicle::destroy($id);
     }
+
+    /**
+     * Search for a make.
+     *
+     * @param  str  $make
+     * @return \Illuminate\Http\Response
+     */
+    public function search($make)
+    {
+        return Vehicle::where('make', $make)->get();
+    }
 }
