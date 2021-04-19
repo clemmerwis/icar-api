@@ -1,5 +1,5 @@
 <?php
-use App\Models\Vehicle;
+use App\Http\Controllers\VehicleController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -14,17 +14,9 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/vehicles', function() {
-    return Vehicle::all();
-});
-
-Route::Post('/vehicles', function() {
-   return Vehicle::create([
-       'make' => 'Ford',
-       'model' => 'Focus',
-       'year' => '2006'
-   ]);
-});
+// Route::get('/vehicles', [VehicleController::class, 'index']);
+// Route::post('/vehicles', [VehicleController::class, 'store']);
+Route::resource('vehicles', VehicleController::class);
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
