@@ -8,4 +8,14 @@ use Illuminate\Database\Eloquent\Model;
 class Article extends Model
 {
     use HasFactory;
+
+    protected $fillable = [
+        'joomla_id',
+        'joomla_url',
+        'category',
+        'year',
+        'make',
+        'model',
+        'submodel'
+    ];
 }

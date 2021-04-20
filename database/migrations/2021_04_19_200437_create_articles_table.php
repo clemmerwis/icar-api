@@ -17,6 +17,7 @@ class CreateArticlesTable extends Migration
             $table->id();
             $table->integer('joomla_id');
             $table->string('joomla_url');
+            $table->string('category');
             $table->string('year')->nullable();
             $table->string('make');
             $table->string('model')->nullable();
