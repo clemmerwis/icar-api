@@ -20,7 +20,7 @@ use Illuminate\Support\Facades\Route;
 Route::resource('vehicles', VehicleController::class);
 Route::resource('articles', ArticleController::class);
 
-Route::get('articles/search/{searchtype}/{make}/{model?}/{year?}', [ArticleController::class, 'search']);
+Route::get('articles/search/{searchtype}/{make}/{model}/{year?}', [ArticleController::class, 'search']);
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();

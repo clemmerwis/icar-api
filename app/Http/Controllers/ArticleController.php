@@ -82,14 +82,24 @@ class ArticleController extends Controller
      * @param  str  $year
      * @return \Illuminate\Http\Response
      */
-    public function search($search_type, $make, $model = null, $year = null)
+    public function search($search_type, $make, $model, $year = null)
     {
         return match($search_type) {
-            'OEM-Calibartion-Requirements-Search' => Article::where(['category' => 80, 'make' => $make, 'model' => $model, 'year' => $year])->get(),
-            'OEM-Partial-Part-Replacement-Search' => Article::where(['category' => 3, 'make' => $make, 'model' => $model, 'year' => $year])->get(),
-            'OEM-Restraints-System-Part-Replacement-Search' => Article::where(['category' => 77, 'make' => $make, 'model' => $model, 'year' => $year])->get(),
-            'OEM-Hybrid-And-Electric-Vehicle-Disable-Search' => Article::where(['category' => 78, 'make' => $make, 'model' => $model, 'year' => $year])->get(),
-            default => abort(404),
+            'OEM-Calibartion-Requirements-Search' => $this->whereVars(80, $make, $model, $year),
+            'OEM-Partial-Part-Replacement-Search' => $this->whereVars(3, $make, $model, $year),
+            'OEM-Restraints-System-Part-Replacement-Search' => $this->whereVars(77, $make, $model, $year),
+            'OEM-Hybrid-And-Electric-Vehicle-Disable-Search' => $this->whereVars(78, $make, $model, $year),
+            default => 'test'
+        };
+    }
+
+    public function whereVars($category, $make, $model, $year = null)
+    {
+        return match (true) {
+            $model !== 'model' && isset($year) => Article::where(['category' => $category, 'make' => $make, 'model' => $model, 'year' => $year])->get(),
+            $model !== 'model' => Article::where(['category' => $category, 'make' => $make, 'model' => $model])->get(),
+            isset($year) => Article::where(['category' => $category, 'make' => $make, 'year' => $year])->get(),
+            default => 'none'
         };
     }
 }
