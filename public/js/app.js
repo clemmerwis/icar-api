@@ -16584,35 +16584,87 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
     return {
-      years: [2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021],
-      makes: ['ford', 'chevrolet', 'honda'],
-      models: [{
-        make: 'ford',
-        model: 'fusion'
-      }, {
-        make: 'chevrolet',
-        model: 'equinox'
-      }, {
-        make: 'honda',
-        model: 'civic'
-      }],
+      years: [],
+      makes: [],
+      models: [],
       form: {
         make: null,
         model: null,
         year: null
       },
-      results: []
+      results: [],
+      catId: 3
     };
   },
+  mounted: function mounted() {
+    this.getMakes();
+    this.getYears();
+  },
   methods: {
-    getArticles: function getArticles() {
+    onMakeChange: function onMakeChange() {
+      this.getModels();
+      this.getYears();
+      this.getArticles();
+    },
+    onModelChange: function onModelChange() {
+      this.getModels();
+      this.getYears();
+      this.getArticles();
+    },
+    onYearChange: function onYearChange() {
+      this.getArticles();
+    },
+    getYears: function getYears() {
       var _this = this;
+
+      var keys = Object.keys(this.form);
+      var params = {
+        cat_id: this.catId
+      };
+      keys.forEach(function (k) {
+        if (_this.form[k] && k !== 'year') {
+          params[k] = _this.form[k];
+        }
+      });
+      axios.get('/api/ymm/options/years', {
+        params: params
+      }).then(function (res) {
+        _this.years = res.data;
+      });
+    },
+    getMakes: function getMakes() {
+      var _this2 = this;
+
+      var params = {
+        cat_id: this.catId
+      };
+      axios.get('/api/ymm/options/makes', {
+        params: params
+      }).then(function (res) {
+        _this2.makes = res.data;
+      });
+    },
+    getModels: function getModels() {
+      var _this3 = this;
+
+      var params = {
+        cat_id: this.catId,
+        make: this.form.make
+      };
+      axios.get('/api/ymm/options/models', {
+        params: params
+      }).then(function (res) {
+        _this3.models = res.data;
+      });
+    },
+    getArticles: function getArticles() {
+      var _this4 = this;
 
       var keys = Object.keys(this.form);
       var params = {};
       keys.forEach(function (k) {
-        if (_this.form[k]) {
-          params[k] = _this.form[k];
+        if (_this4.form[k]) {
+          params[k] = _this4.form[k];
         }
       });
       console.log(params);
@@ -16620,19 +16672,14 @@ __webpack_require__.r(__webpack_exports__);
         params: params
       }).then(function (res) {
         console.log(res);
-        _this.results = res.data.data;
+        _this4.results = res.data.data;
       });
     }
   },
-  computed: {
-    currentModels: function currentModels() {
-      var _this2 = this;
-
-      var filtered = this.models.filter(function (m) {
-        return m.make == _this2.form.make;
-      });
-      return filtered.length ? filtered : [];
-    }
+  computed: {// currentModels() {
+    //   let filtered = this.models.filter(m => m.make == this.form.make)
+    //   return filtered.length ? filtered : []
+    // }
   }
 });
 
@@ -16709,7 +16756,7 @@ var _hoisted_13 = {
 function render(_ctx, _cache, $props, $setup, $data, $options) {
   return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)("div", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_1, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_2, [_hoisted_3, (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("select", {
     onChange: _cache[1] || (_cache[1] = function () {
-      return $options.getArticles && $options.getArticles.apply($options, arguments);
+      return $options.onMakeChange && $options.onMakeChange.apply($options, arguments);
     }),
     "onUpdate:modelValue": _cache[2] || (_cache[2] = function ($event) {
       return $data.form.make = $event;
@@ -16728,18 +16775,18 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
   /* HYDRATE_EVENTS, NEED_PATCH */
   ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelSelect, $data.form.make]])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_5, [_hoisted_6, (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("select", {
     onChange: _cache[3] || (_cache[3] = function () {
-      return $options.getArticles && $options.getArticles.apply($options, arguments);
+      return $options.onModelChange && $options.onModelChange.apply($options, arguments);
     }),
     disabled: !$data.form.make,
     "onUpdate:modelValue": _cache[4] || (_cache[4] = function ($event) {
       return $data.form.model = $event;
     }),
     "class": "input--select"
-  }, [_hoisted_7, ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($options.currentModels, function (model, key) {
+  }, [_hoisted_7, ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($data.models, function (model, key) {
     return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)("option", {
       key: key,
-      value: model.model
-    }, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(model.model), 9
+      value: model
+    }, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(model), 9
     /* TEXT, PROPS */
     , ["value"]);
   }), 128
@@ -16748,7 +16795,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
   /* PROPS, HYDRATE_EVENTS */
   , ["disabled"]), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelSelect, $data.form.model]])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_8, [_hoisted_9, (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("select", {
     onChange: _cache[5] || (_cache[5] = function () {
-      return $options.getArticles && $options.getArticles.apply($options, arguments);
+      return $options.onYearChange && $options.onYearChange.apply($options, arguments);
     }),
     placeholder: "SELECT YEAR",
     disabled: !$data.form.make && !$data.form.model,
@@ -16770,7 +16817,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
   , ["disabled"]), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelSelect, $data.form.year]])])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_11, [!$data.results.length ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)("div", _hoisted_12, "No results")) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), $data.results.length ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)("div", _hoisted_13, [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($data.results, function (result) {
     return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)("div", {
       key: result.id
-    }, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(result.joomla_url), 1
+    }, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(result.title), 1
     /* TEXT */
     );
   }), 128

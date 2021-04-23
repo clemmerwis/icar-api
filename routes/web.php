@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Services\JoomlaConnect;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -19,4 +21,10 @@ Route::get('/', function () {
 
 Route::get('/test', function () {
     return view('test');
+});
+
+Route::get('/joomla-data', function () {
+    $data = new JoomlaConnect;
+    return $data->getArticles(4);
+    return 'success';
 });

@@ -79,4 +79,11 @@ class VehicleController extends Controller
     {
         return Vehicle::where('make', $make)->get();
     }
+
+    public function test(Request $request)
+    {
+        
+        $make = $request->filled('make') ? $request->input('make') : '';
+        return Vehicle::modelsByMake($make);
+    }
 }

@@ -83,7 +83,7 @@ class ArticleController extends Controller
      * @param  str  $year
      * @return \Illuminate\Http\Response
      */
-    public function search($search_type, $make, $model, $year = null)
+    public function search_OLD($search_type, $make, $model, $year = null)
     {
         // return match ($search_type) {
         //     'OEM-Calibartion-Requirements-Search' => $this->whereVars(80, $make, $model, $year),
@@ -94,7 +94,7 @@ class ArticleController extends Controller
         // };
     }
 
-    public function whereVars($category, $make, $model, $year = null)
+    public function whereVars_OLD($category, $make, $model, $year = null)
     {
         // return match (true) {
         //     $model !== 'model' && isset($year) => Article::where(['category' => $category, 'make' => $make, 'model' => $model, 'year' => $year])->get(),
@@ -108,25 +108,45 @@ class ArticleController extends Controller
      * Alt search function
      *
      * @param  \Illuminate\Http\Request  $request
+     * @param  int  $category
      */
-    public function taylor(Request $request)
+    public function search(Request $request, $category)
     {
         $year = $request->filled('year') ? $request->input('year') : false;
         $make = $request->filled('make') ? $request->input('make') : false;
         $model = $request->filled('model') ? $request->input('model') : false;
+        $sortBy = $request->filled('sort_by') ? $request->input('sort_by') : 'year';
+        $sortOrder = $request->filled('sort_order') ? $request->input('sort_order') : 'asc';
         // This can be a request param
         $perPage = 12;
 
         $query = Article::query();
+        if(!$make) {
+            return ArticleResource::collection([]);
+        }
 
-        $articles = $query->when($make, function ($q, $make) {
+        $articles = $query->where('category', $category)
+                    ->when(!$year, function ($q) {
+                        $q->whereNotNull('year');
+                    })->when(!$model, function ($q) {
+                        $q->whereNotNull('model');
+                    })->when($make, function ($q, $make) {
                         $q->where('make', $make);
                     })->when($model, function ($q, $model) {
                         $q->where('model', $model);
                     })->when($year, function ($q, $year) {
                         $q->where('year', $year);
-                    })->paginate($perPage)->appends($request->query());
+                    })->orderBy($sortBy, $sortOrder);
+        
+        $yMin = $articles->min('year');
+        $yMax = $articles->max('year');
 
-         return ArticleResource::collection($articles);
+        return (new ArticleResource($articles->paginate($perPage)->appends($request->query())))
+                ->additional(['extra_meta' => [
+                    'year_min' => $yMin,
+                    'year_max' => $yMax
+                ]]);
+
+        //  return ArticleResource::collection($articles);
     }
 }

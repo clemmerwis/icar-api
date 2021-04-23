@@ -9,13 +9,32 @@ class Article extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        'joomla_id',
-        'joomla_url',
-        'category',
-        'year',
-        'make',
-        'model',
-        'submodel'
+    protected $guarded = [];
+
+    protected $casts = [
+        'joomla_data' => 'collection'
     ];
+
+    protected $appends = ['joomla_category'];
+
+    public function scopeModelsByMake($query, $make, $cat)
+    {
+        $models = $query->where(['make' => $make, 'category' => $cat])->pluck('model');
+        return $models->unique()->filter()->sort()->values()->all();
+    }
+
+    public function scopeMakes($query, $cat)
+    {
+        $makes = $query->where('category', $cat)->pluck('make');
+        return $makes->unique()->filter()->sort()->values()->all();
+    }
+
+    public function getJoomlaCategoryAttribute()
+    {
+        $cat = ArticleCategory::where('joomla_id', $this->category);
+        if($cat->exists()) {
+            return $cat->first();
+        }
+        return null;
+    }
 }
